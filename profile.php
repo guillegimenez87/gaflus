@@ -1,11 +1,17 @@
 <?php
 session_start();
 
-if($_SESSION["s_usuario"] === null){
-    header("Location: index.php");
+//Si no se inicio sesión, regresa a la pag index de LOGIN
+if ($_SESSION["s_usuario"] === null){
+  header("Location: index.php");
+}else{
+    if($_SESSION["s_idRol"]!=1){
+        header("Location: perfil.php");
+    }
 }
 
 ?>
+<!-- Pagina para ADMINISTRADORES del sistema-->
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
@@ -13,7 +19,6 @@ if($_SESSION["s_usuario"] === null){
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="TP de PP3">
   <meta name="author" content="Guillermo Gimenez">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Gaflus - Mayorista de productos de limpieza</title>
 
@@ -28,36 +33,7 @@ if($_SESSION["s_usuario"] === null){
     <link rel="stylesheet" type="text/css" href="vendor/datatables/datatables.min.css"/>
     <!--datables estilo bootstrap 4 CSS-->  
     <link rel="stylesheet"  type="text/css" href="vendor/datatables/DataTables-1.10.18/css/dataTables.bootstrap4.min.css">      
-       
-       <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial;
-  font-size: 17px;
-}
-
-.container {
-  position: relative;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.container img {vertical-align: middle;}
-
-.container .content {
-  position: absolute;
-  bottom: 0;
-  background: rgb(0, 0, 0); /* Fallback color */
-  background: rgba(0, 0, 0, 0.5); /* Black background with 0.5 opacity */
-  color: #f1f1f1;
-  width: 94%;
-  padding: 20px;
-}
-</style>
-
+    
 </head>
 
 <body id="page-top">
@@ -70,7 +46,8 @@ body {
 
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="pag_inicio2.php">
-        <div class="sidebar-brand-icon rotate-n-15"></div>
+        <div class="sidebar-brand-icon rotate-n-15">
+        </div>
         <div class="sidebar-brand-text mx-3">GAFLUS <sup>S.A.</sup></div>
       </a>
 
@@ -145,13 +122,13 @@ body {
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION["s_usuario"];?></span>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION["s_usuario"];?></span> <?php echo $_SESSION["s_idRol"];?>
                 <!--<span class="badge badge-primary"></span>-->
                 <img class="img-profile rounded-circle" src="imagenes/user.jpg">
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="profile.php">
+                <a class="dropdown-item" href="#">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                   Perfil
                 </a>
@@ -170,18 +147,29 @@ body {
 
 <!--INICIO del contenido principal-->
 <div class="container">
-      
-<h2>¡Bienvenido a Gaflus Clean!</h2>
 
-<div class="container">
-  <img src="imagenes/deposito.jpg" alt="Casa central en Sarandi, Avellaneda, Bs. As." style="width:100%;">
-  <div class="content">
-    <h1>Acerca de nosotros</h1>
-    <p>Nuestro principal rol en su rubro ha sido ser proveedor de artículos de limpieza y desinfección, contando con una cartera de productos recientemente actualizada debido al panorama actual de pandemia.</p>
-  </div>
-</div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="jumbotron">
+                        
+                        <h1 class="display-4 text-center">¡Bienvenido!</h1>
+                      <h2 class="text-center">Usuario: <span class="badge badge-primary"><?php echo $_SESSION["s_usuario"];?></span></h2>    
+                      <p class="lead text-center">Este usuario tiene permisos de administrador.</p>
+                      <hr class="my-4">
+                        <div class="container" align="center">
+  <!--   GRAFICA DE LOS BACKEND DEL ADMIN -->
+                        <a href="crud_pedidos/index_admin.php"><img class="img-profile" src="imagenes/backend1.png"></a>
+                        <a href="crud_gaflus/inventario.php"><img class="img-profile" src="imagenes/backend2.png"></a>
+                        <a href="crud_gaflus/index.php"><img class="img-profile" src="imagenes/backend3.png"></a>
+                        </div>
+                      <hr class="my-4">                
+                      <h2 class="display-4 text-center"><a class="btn btn-danger btn-lg" href="bd/logout.php" role="button">Cerrar Sesión</a></h2>
+                    </div>
+                </div>
+            </div>
+        </div> 
 
-    
 </div>
 <!--FIN del contenido principal-->
 
@@ -193,10 +181,9 @@ body {
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>IFTS12 - Trabajo Practico </span>
+            <span>IFTS12 - Trabajo Practico</span>
           </div>
         </div>
-
 
       </footer>
       <!-- End of Footer -->
@@ -225,6 +212,16 @@ body {
     <!-- datatables JS -->
     <script type="text/javascript" src="vendor/datatables/datatables.min.js"></script>    
     <!-- código propio JS --> 
+    <script type="text/javascript" src="main.js"></script>  
+   
+   <!-- Para las tablas: jQuery, Popper.js, Bootstrap JS -->
+    <script src="jquery/jquery-3.3.1.min.js"></script>
+    <script src="popper/popper.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+      
+    <!-- datatables JS -->
+    <script type="text/javascript" src="datatables/datatables.min.js"></script>    
+     
     <script type="text/javascript" src="main.js"></script>  
     
 </body>
